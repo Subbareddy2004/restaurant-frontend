@@ -31,7 +31,9 @@ Type your request below, and I'll help you with your order! 😊`,
         fetchMenu();
     }, []);
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const API_URL = 'https://restaurant-backend-liard.vercel.app';
+
+    console.log('API_URL:', API_URL); // Add this line for debugging
 
     const fetchMenu = async () => {
         try {
