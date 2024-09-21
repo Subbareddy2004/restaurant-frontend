@@ -1,21 +1,18 @@
-// order-bot/src/App.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './App.css'; // Import the CSS file
+import { useTranslation } from 'react-i18next';
+import { FaPaperPlane, FaUtensils, FaShoppingCart } from 'react-icons/fa';
+import './App.css';
+import './i18n';
 
 const App = () => {
+    const { t, i18n } = useTranslation();
+    const [currentLanguage, setCurrentLanguage] = useState('en');
+
     const [message, setMessage] = useState('');
     const [chat, setChat] = useState([
         {
-            text: `👋 *Welcome to the Food Ordering Chatbot!*
-
-🍽 How can I assist you today? You can ask me to order food, browse the menu, or get recommendations. Here are some examples of what you can do:
-  
-- "Show me the menu"
-- "I want to order chicken biryani"
-- "What do you recommend for dessert?"
-
-Type your request below, and I'll help you with your order! 😊`,
+            text: t('initialBotMessage'),
             sender: 'bot',
             name: 'OrderBot'
         }
@@ -94,22 +91,23 @@ Type your request below, and I'll help you with your order! 😊`,
         setShowConfirmation(false);
     };
 
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
+        setCurrentLanguage(lng);
+    };
+
     return (
         <div className="app-container">
-            <div className="menu-container">
-                <h2>Recommended Menu</h2>
-                {filteredMenu.map((item) => (
-                    <div key={item.id} className="menu-item">
-                        <h3>{item.name}</h3>
-                        <p>{item.description}</p>
-                        <p>Category: {item.category}</p>
-                        <p>Price: ₹{parseFloat(item.price).toFixed(2)}</p>
-                        <button onClick={() => addToOrder(item)}>Add to Order</button>
-                    </div>
-                ))}
+            <div className="language-selector">
+                <select value={currentLanguage} onChange={(e) => changeLanguage(e.target.value)}>
+                    <option value="en">{t('languageEnglish')}</option>
+                    <option value="te">{t('languageTelugu')}</option>
+                    <option value="hi">{t('languageHindi')}</option>
+                    <option value="ta">{t('languageTamil')}</option>
+                </select>
             </div>
             <div className="chat-container">
-                <h1>Food Ordering Chatbot</h1>
+                <h1><FaUtensils /> {t('welcome')}</h1>
                 <div className="chat-messages">
                     {chat.map((msg, index) => (
                         <div key={index} className={`message ${msg.sender}-message`}>
@@ -124,28 +122,40 @@ Type your request below, and I'll help you with your order! 😊`,
                         type="text"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Type your message here..."
+                        placeholder={t('typePlaceholder')}
                     />
-                    <button onClick={handleSend}>Send</button>
+                    <button onClick={handleSend}><FaPaperPlane /> {t('send')}</button>
                 </div>
             </div>
+            <div className="menu-container">
+                <h2>{t('recommendedMenu')}</h2>
+                {filteredMenu.map((item) => (
+                    <div key={item.id} className="menu-item">
+                        <h3>{item.name}</h3>
+                        <p>{item.description}</p>
+                        <p>{t('category')}: {item.category}</p>
+                        <p>{t('price')}: ₹{parseFloat(item.price).toFixed(2)}</p>
+                        <button onClick={() => addToOrder(item)}>{t('addToOrder')}</button>
+                    </div>
+                ))}
+            </div>
             <div className="order-container">
-                <h2>Your Order</h2>
+                <h2><FaShoppingCart /> {t('yourOrder')}</h2>
                 {order.map((item, index) => (
                     <div key={index} className="order-item">
                         <span>{item.name}</span>
                         <span>₹{parseFloat(item.price).toFixed(2)}</span>
                     </div>
                 ))}
-                <div className="total-price">Total: ₹{totalPrice.toFixed(2)}</div>
+                <div className="total-price">{t('total')}: ₹{totalPrice.toFixed(2)}</div>
                 {order.length > 0 && (
-                    <button onClick={confirmOrder}>Confirm Order</button>
+                    <button onClick={confirmOrder}>{t('confirmOrder')}</button>
                 )}
             </div>
             {showConfirmation && (
                 <div className="modal">
                     <div className="modal-content">
-                        <h2>Confirm Your Order</h2>
+                        <h2>{t('confirmYourOrder')}</h2>
                         <div className="order-summary">
                             {order.map((item, index) => (
                                 <div key={index} className="order-item-confirm">
@@ -154,13 +164,13 @@ Type your request below, and I'll help you with your order! 😊`,
                                 </div>
                             ))}
                             <div className="order-total">
-                                <span>Total:</span>
+                                <span>{t('total')}:</span>
                                 <span>₹{totalPrice.toFixed(2)}</span>
                             </div>
                         </div>
                         <div className="modal-buttons">
-                            <button className="confirm-button" onClick={finalizeOrder}>Confirm Order</button>
-                            <button className="cancel-button" onClick={() => setShowConfirmation(false)}>Cancel</button>
+                            <button className="confirm-button" onClick={finalizeOrder}>{t('confirmOrder')}</button>
+                            <button className="cancel-button" onClick={() => setShowConfirmation(false)}>{t('cancel')}</button>
                         </div>
                     </div>
                 </div>
