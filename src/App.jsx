@@ -12,7 +12,7 @@ const App = () => {
     const [message, setMessage] = useState('');
     const [chat, setChat] = useState([
         {
-            text: t('initialBotMessage'),
+            text: t('`👋 Welcome to the Food Ordering Chatbot!'),
             sender: 'bot',
             name: 'OrderBot'
         }
